@@ -10,7 +10,7 @@ def video_function(my_video):
 
     #st.video(my_video)
     #start_button = st.button(label="Start", key="start_button")
-    start_button = st.checkbox('Run WebCam for detection')
+    start_button = st.checkbox('Start detection')
 
     if start_button:
 
@@ -97,15 +97,6 @@ def video_function(my_video):
             #cv2.imshow("Video ", frame)
             frameST.image(frame, channels="BGR")
 
-            if st.button("Stop detection"):
-                break
-
-            #return av.VideoFrame.from_ndarray(frame, format="bgr24")
-
-
-
-
-
-
-        cap.release()
-        cv2.destroyAllWindows()
+        if st.button("Stop detection"):
+            cap.release()
+            cv2.destroyAllWindows()
