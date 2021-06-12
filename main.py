@@ -53,7 +53,11 @@ def video_detection():
              ' Adjust the confidence and nms threshold to see how the algorithms detections change. '
             )
 
-    choice = st.radio("", ("See an illustration", "Upload Video of your choice"))
+    #choice = st.radio(" Choose one of the detection process", ("See an illustration", "Upload Video of your choice"))
+    choice = st.selectbox(
+        'Choose one of the detection process',
+        ('See an illustration', 'Upload Video of your choice')
+    )
 
     if choice == "Upload Video of your choice":
         st.subheader("Input Video")

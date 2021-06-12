@@ -10,10 +10,11 @@ def video_function(my_video):
 
     #st.video(my_video)
     #start_button = st.button(label="Start", key="start_button")
-    start_button = st.checkbox('Start detection', key="1")
-    stop_button = st.checkbox('Stop detection', key="2")
+    #start_button = st.checkbox('Start detection', key="1")
+    #stop_button = st.checkbox('Stop detection', key="2")
+    button = st.radio("", ("Start detection", "Stop detection"))
 
-    if start_button:
+    if button == "Start detection":
 
         #load yolo
         net = cv2.dnn.readNet("weights/yolov3.weights", "weights/yolov3.cfg")
@@ -98,7 +99,7 @@ def video_function(my_video):
             #cv2.imshow("Video ", frame)
             frameST.image(frame, channels="BGR")
 
-            if stop_button:
+            if button == "Stop detection":
                 break
                 cap.release()
 
