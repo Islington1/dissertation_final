@@ -4,12 +4,12 @@ import numpy as np
 import streamlit as st
 from streamlit_webrtc import *
 
-# WEBRTC_CLIENT_SETTINGS = ClientSettings(
-#     rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
-#     media_stream_constraints={"video": True, "audio": True},
-# )
+WEBRTC_CLIENT_SETTINGS = ClientSettings(
+    #rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
+    media_stream_constraints={"video": True, "audio": True},
+)
 
-def web_cam_yolo_fn(mirror=True):
+def web_cam_yolo_fn():
 
     class VideoTransformer(VideoProcessorBase):
         #load yolo
@@ -81,7 +81,7 @@ def web_cam_yolo_fn(mirror=True):
     webrtc_streamer(
         key="object-detection",
         #mode=WebRtcMode.SENDRECV,
-        #client_settings=WEBRTC_CLIENT_SETTINGS,
+        client_settings=WEBRTC_CLIENT_SETTINGS,
         video_processor_factory=VideoTransformer,
         async_processing=True,
     )

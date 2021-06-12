@@ -97,6 +97,8 @@ def video_function(my_video):
             #cv2.imshow("Video ", frame)
             frameST.image(frame, channels="BGR")
 
-        if st.button("Stop detection"):
-            cap.release()
-            cv2.destroyAllWindows()
+            if st.button("Stop detection"):
+                break
+                cap.release()
+
+
