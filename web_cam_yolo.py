@@ -6,7 +6,7 @@ from streamlit_webrtc import (
     ClientSettings,
     WebRtcMode,
     webrtc_streamer,
-    VideoTransformerBase,
+    VideoProcessorBase,
 )
 
 WEBRTC_CLIENT_SETTINGS = ClientSettings(
@@ -16,7 +16,7 @@ WEBRTC_CLIENT_SETTINGS = ClientSettings(
 
 def web_cam_yolo_fn(mirror=True):
 
-    class VideoTransformer(VideoTransformerBase):
+    class VideoTransformer(VideoProcessorBase):
         #load yolo
 
         # Loading image
@@ -87,7 +87,7 @@ def web_cam_yolo_fn(mirror=True):
         key="object-detection",
         mode=WebRtcMode.SENDRECV,
         client_settings=WEBRTC_CLIENT_SETTINGS,
-        video_processor_factory=VideoTransformer,
+        video_processor_factory=VideoProcessorBase,
         async_processing=True,
     )
 
