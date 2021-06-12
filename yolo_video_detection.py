@@ -11,6 +11,7 @@ def video_function(my_video):
     #st.video(my_video)
     #start_button = st.button(label="Start", key="start_button")
     start_button = st.checkbox('Start detection', key="1")
+    stop_button = st.checkbox('Stop detection', key="2")
 
     if start_button:
 
@@ -97,7 +98,7 @@ def video_function(my_video):
             #cv2.imshow("Video ", frame)
             frameST.image(frame, channels="BGR")
 
-            if st.button("Stop detection", key="2"):
+            if stop_button:
                 break
                 cap.release()
 
