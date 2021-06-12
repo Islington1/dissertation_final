@@ -1,25 +1,20 @@
+import time
 import cv2
 import numpy as np
-import time
 import streamlit as st
-import matplotlib.pyplot as plt
-import tempfile
+import av
 
 
 def video_function(my_video):
 
-    # Display subheading on top of input image
-
-    column1 = st.beta_columns(1)
-
-    # Display the input image using matplotlib
-    plt.figure(figsize=(20, 20))
-    # st.write(" my_video ",my_video)
 
     #st.video(my_video)
-    start_button = st.button("Start Detecting")
+    #start_button = st.button(label="Start", key="start_button")
+    #start_button = st.checkbox('Start detection', key="1")
+    #stop_button = st.checkbox('Stop detection', key="2")
+    button = st.radio("", ("Start detection", "Stop detection"))
 
-    if start_button:
+    if button == "Start detection":
 
         #load yolo
         net = cv2.dnn.readNet("weights/yolov3.weights", "weights/yolov3.cfg")
@@ -104,8 +99,8 @@ def video_function(my_video):
             #cv2.imshow("Video ", frame)
             frameST.image(frame, channels="BGR")
 
-            # if st.button("Stop Detecting", key="stop_detecting"):
-            #     break
+            if button == "Stop detection":
+                break
+                cap.release()
 
-        cap.release()
-        cv2.destroyAllWindows()
+

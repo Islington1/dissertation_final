@@ -6,18 +6,11 @@ import matplotlib.pyplot as plt
 import tempfile
 
 
-def video_function(my_video):
+def web_cam(mirror=True):
 
     # Display subheading on top of input image
 
-    column1 = st.beta_columns(1)
-
-    # Display the input image using matplotlib
-    plt.figure(figsize=(20, 20))
-    # st.write(" my_video ",my_video)
-
-    #st.video(my_video)
-    start_button = st.button("Start Detecting")
+    start_button = st.checkbox('Run WebCam for detection')
 
     if start_button:
 
@@ -28,25 +21,28 @@ def video_function(my_video):
         with open("weights/coco.names", "r") as f:
             classes = [line.strip() for line in f.readlines()]
 
-        layer_names = net.getLayerNames()
-        output_layers = [layer_names[i[0] - 1] for i in net.getUnconnectedOutLayers()]
+        #layer_names = net.getLayerNames()
+        output_layers = net.getUnconnectedOutLayersNames()
         colors = np.random.uniform(0, 255, size=(len(classes), 3))
 
         # Loading image
-        cap = cv2.VideoCapture(my_video, apiPreference=0)
 
-        # cap = my_video
+        cap = cv2.VideoCapture(0)
+
         font = cv2.FONT_HERSHEY_PLAIN
         starting_time = time.time()
         frame_id = 0
         frameST = st.empty()
+
+        FRAME_WINDOW = st.image([])
+
         while True:
             _, frame = cap.read()
             frame_id += 1
-            height, width, channels = frame.shape
+            height, width, _ = frame.shape
 
             # Detecting objects
-            blob = cv2.dnn.blobFromImage(frame, 0.00392, (320, 320), (0, 0, 0), True, crop=False)
+            blob = cv2.dnn.blobFromImage(frame, 1/255, (320, 320), (0, 0, 0), swapRB = True, crop=False)
 
             net.setInput(blob)
             outs = net.forward(output_layers)
@@ -61,7 +57,7 @@ def video_function(my_video):
                     scores = detection[5:]
                     class_id = np.argmax(scores)
                     confidence = scores[class_id]
-                    if confidence > 0.5:
+                    if confidence > 0.4:
                         # object detected
 
                         center_x = int(detection[0] * width)
@@ -77,35 +73,33 @@ def video_function(my_video):
                         confidences.append(float(confidence))
                         class_ids.append(class_id)
 
-            indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-            # Adjust            confidence         threshold and NMS(Non - Maximum        Suppression) threshold
-
-            # score_threshold = st.sidebar.slider("Confidence threshold", 0.00, 1.00, 0.5, 0.01)
-            # nms_threshold = st.sidebar.slider("NMS threshold", 0.00, 1.00, 0.5, 0.01)
-            # indexes = cv2.dnn.NMSBoxes(boxes, confidences, score_threshold, nms_threshold)
-            # print(indexes)
+            indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0.4)
 
             items = []  # Array to store label of detected object(s)
             for i in range(len(boxes)):
                 if i in indexes:
                     x, y, w, h = boxes[i]
                     label = str(classes[class_ids[i]])
-                    confidence = confidences[i]
+                    confidence = str(round(confidences[i], 2))
                     color = colors[class_ids[i]]
-                    cv2.rectangle(frame, (x, y), (x+w, y+h), color, 5)
-                    cv2.putText(frame, label+" "+str(round(confidence, 2)), (x, y+30), font, 3, color, 5)
+                    cv2.rectangle(frame, (x, y), (x+w, y+h), color, 3)
+                    cv2.putText(frame, label+" "+confidence, (x, y+30), font, 3, color, 3)
                     items.append(label)  # Add the output label of bounded object
 
             elapsed_time = time.time() - starting_time
             fps = frame_id / elapsed_time
             cv2.putText(frame, "FPS: "+ str(round(fps, 2)), (10, 50), font, 4, (0, 0, 0), 3)
 
+            frame2 = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            FRAME_WINDOW.image(frame2)
 
             #cv2.imshow("Video ", frame)
-            frameST.image(frame, channels="BGR")
+            #frameST.image(frame, channels="BGR")
 
-            # if st.button("Stop Detecting", key="stop_detecting"):
-            #     break
+            key = cv2.waitKey(1)
+            if key == 27:
+                break
 
         cap.release()
         cv2.destroyAllWindows()
+
