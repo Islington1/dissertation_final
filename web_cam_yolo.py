@@ -2,17 +2,12 @@ import cv2
 import av
 import numpy as np
 import streamlit as st
-from streamlit_webrtc import (
-    ClientSettings,
-    WebRtcMode,
-    webrtc_streamer,
-    VideoProcessorBase,
-)
+from streamlit_webrtc import *
 
-WEBRTC_CLIENT_SETTINGS = ClientSettings(
-    rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
-    media_stream_constraints={"video": True, "audio": True},
-)
+# WEBRTC_CLIENT_SETTINGS = ClientSettings(
+#     rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]},
+#     media_stream_constraints={"video": True, "audio": True},
+# )
 
 def web_cam_yolo_fn(mirror=True):
 
@@ -33,7 +28,7 @@ def web_cam_yolo_fn(mirror=True):
             colors = np.random.uniform(0, 255, size=(len(classes), 3))
             font = cv2.FONT_HERSHEY_PLAIN
             image = frame.to_ndarray(format="bgr24")
-            blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 1/255, (320, 320), (0, 0, 0), swapRB = True, crop=False)
+            blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 1/255, (320, 320), (0, 0, 0), swapRB=True, crop=False)
             net.setInput(blob)
             output_layers = net.getUnconnectedOutLayersNames()
             outs = net.forward(output_layers)
@@ -83,18 +78,12 @@ def web_cam_yolo_fn(mirror=True):
 
             return av.VideoFrame.from_ndarray(annotated_image, format="bgr24")
 
-    webrtc_ctx = webrtc_streamer(
+    webrtc_streamer(
         key="object-detection",
-        mode=WebRtcMode.SENDRECV,
-        client_settings=WEBRTC_CLIENT_SETTINGS,
-        video_processor_factory=VideoProcessorBase,
+        #mode=WebRtcMode.SENDRECV,
+        #client_settings=WEBRTC_CLIENT_SETTINGS,
+        video_processor_factory=VideoTransformer,
         async_processing=True,
     )
-
-    confidence_threshold = st.slider(
-        "Confidence threshold", 0.0, 1.0, 0.5, 0.05
-    )
-    if webrtc_ctx.video_processor:
-        webrtc_ctx.video_processor.confidence_threshold = confidence_threshold
 
 
