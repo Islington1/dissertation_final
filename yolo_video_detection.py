@@ -7,8 +7,7 @@ import av
 
 def video_function(my_video):
 
-    # Display subheading on top of input image
-
+    
     #st.video(my_video)
     start_button = st.button(label="Start", key="start_button")
 
